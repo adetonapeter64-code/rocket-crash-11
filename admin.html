@@ -595,9 +595,9 @@ th{
         </h3>
 
         <p class="note">
-          Enter as many test multipliers as you want.
-          These values are simulation-only and do not control
-          the real-money game.
+          Enter your manual crash targets for the play-money simulation.
+          Save them to keep the sequence on this device, then run the test.
+          These targets do not control live game rounds or real-money outcomes.
         </p>
 
         <textarea
@@ -620,6 +620,13 @@ th{
             class="testRun"
           >
             ▶️ RUN TEST
+          </button>
+
+          <button
+            id="saveTestTargets"
+            style="background:#26104d;border:1px solid #9d36ff"
+          >
+            💾 SAVE TARGETS
           </button>
 
           <button
@@ -1362,7 +1369,12 @@ async function loadFinance(){
 }
 
 
-/* TEST / SIMULATION */
+/* TEST / SIMULATION — PLAY-MONEY ONLY */
+
+try{
+  const savedTargets=localStorage.getItem('manualPlayTargets');
+  if(savedTargets)$('testValues').value=savedTargets;
+}catch(e){}
 
 let testRunning=false;
 let testTimer=null;
@@ -1781,6 +1793,22 @@ $('runTest').onclick=
 
 $('clearTest').onclick=
   clearTest;
+
+$('saveTestTargets').onclick=()=>{
+  const values=parseTestValues();
+
+  if(!values.length){
+    $('testStatus').textContent='Enter valid targets before saving.';
+    return;
+  }
+
+  try{
+    localStorage.setItem('manualPlayTargets',$('testValues').value);
+    $('testStatus').textContent='Manual play-money targets saved on this device.';
+  }catch(e){
+    $('testStatus').textContent='Could not save targets on this device.';
+  }
+};
 
 
 /* WITHDRAWAL ACTIONS */
